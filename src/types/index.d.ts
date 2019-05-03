@@ -1,4 +1,4 @@
-import {FaxiosRequest, FaxiosResponse, FaxiosOptions, RequestInterceptor, ResponseInterceptor} from '../types';
+import {FaxiosRequest, FaxiosResponse, FaxiosOptions, RequestInterceptor, ResponseInterceptor} from './faxios';
 
 type ReqMethod = (url: string, options: FaxiosRequest) => Promise<FaxiosResponse<any>>;
 

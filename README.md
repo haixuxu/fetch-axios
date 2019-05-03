@@ -6,7 +6,7 @@ faxios like axios implement with fetch api
 
 ```ts
 import fetchApi from 'fetch-axios';
-import {FaxiosResponse, FaxiosRequest, RequestInteceptor, ResponseInteceptor} from 'fetch-axios';
+import {FaxiosResponse, FaxiosRequest, RequestInterceptor, ResponseInterceptor} from 'fetch-axios';
 import errors from '@/common/errors';
 fetchApi.config({
   baseUrl: '/api/v1',
@@ -29,12 +29,12 @@ fetchApi.config({
   },
 });
 
-const reqAop: RequestInteceptor = (req: FaxiosRequest) => {
+const reqAop: RequestInterceptor = (req: FaxiosRequest) => {
   console.log('RequestInteceptor...');
   console.log(req);
   return req;
 };
-const resAop: ResponseInteceptor = (res: FaxiosResponse) => {
+const resAop: ResponseInterceptor = (res: FaxiosResponse) => {
   console.log('ResponseInteceptor....');
   console.log(res);
   return res;
