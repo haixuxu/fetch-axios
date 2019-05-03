@@ -4,9 +4,9 @@ faxios like axios implement with fetch api
 
 ### usage
 
-```
-import fetchApi from 'faxios';
-import {FaxiosResponse, FaxiosRequest, RequestInteceptor, ResponseInteceptor} from 'faxios';
+```ts
+import fetchApi from 'fetch-axios';
+import {FaxiosResponse, FaxiosRequest, RequestInteceptor, ResponseInteceptor} from 'fetch-axios';
 import errors from '@/common/errors';
 fetchApi.config({
   baseUrl: '/api/v1',
@@ -44,7 +44,6 @@ fetchApi.addRequestInterceptor(reqAop);
 fetchApi.addResponseInterceptor(resAop);
 
 export default fetchApi;
-
 ```
 
 ### design
