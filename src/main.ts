@@ -4,7 +4,7 @@
  */
 
 import Faxios from './Faxios';
-import {FaxiosOptions, FaxiosRequest, FaxiosResponse} from './types';
+import {FaxiosOptions, FaxiosRequest, FaxiosResponse} from './types/faxios';
 
 class FaxiosApi extends Faxios {
   public async get(url: string, options: FaxiosRequest) {

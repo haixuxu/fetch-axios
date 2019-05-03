@@ -1,4 +1,4 @@
-import {FaxiosRequest, FaxiosResponse, FaxiosOptions} from './types';
+import {FaxiosRequest, FaxiosResponse, FaxiosOptions} from './types/faxios';
 import {serialize, getFormData, transformHeader, promiseTimeout, promiseResolveReduce} from './utils';
 import defaultOption from './default';
 /**
