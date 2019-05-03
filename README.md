@@ -60,3 +60,62 @@ export default fetchApi;
  *  |-----custom transform FaxiosResponse---->|or|-----global transform FaxiosRequest ---->|
  */
 ```
+
+### api types
+
+```ts
+interface NormalObject {
+  [key: string]: string;
+}
+
+export interface FaxiosOptions {
+  baseUrl?: string;
+  headers?: NormalObject;
+  timeout?: number;
+  mode?: RequestMode;
+  credentials?: RequestCredentials;
+  transformRequest?: (request: FaxiosRequest) => FaxiosRequest;
+  transformResponse?: (response: FaxiosResponse<any>) => FaxiosResponse<any>;
+}
+
+export interface FaxiosRequest {
+  url?: string;
+  method?: string;
+  headers?: NormalObject;
+  query?: NormalObject;
+  urlParams?: NormalObject;
+  payload?: any;
+  config?: FaxiosOptions;
+}
+
+export interface FaxiosResponse<T> {
+  status: number;
+  statusText: string;
+  data: T;
+  headers: NormalObject;
+  config: FaxiosOptions;
+  request: FaxiosRequest;
+  originalResponse: Response;
+}
+
+export type RequestInterceptor = (req: FaxiosRequest) => FaxiosRequest;
+export type ResponseInterceptor = (res: FaxiosResponse<any>) => FaxiosResponse<any>;
+```
+
+### faxios api
+
+```ts
+type ReqMethod = (url: string, options: FaxiosRequest) => Promise<FaxiosResponse<any>>;
+interface FaxiosApi {
+  get: ReqMethod;
+  post: ReqMethod;
+  put: ReqMethod;
+  delete: ReqMethod;
+  patch: ReqMethod;
+  request: (options: FaxiosRequest) => Promise<FaxiosResponse<any>>;
+  config: (defaultOpts: FaxiosOptions) => void;
+  addRequestInterceptor: (reqInterceptor: any) => void;
+  addResponseInterceptor: (resInterceptor: any) => void;
+  FaxiosApi: any;
+}
+```
