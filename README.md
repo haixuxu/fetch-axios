@@ -1,6 +1,6 @@
-### faxios
+### fetch-axios
 
-faxios like axios implement with fetch api
+fetch-axios like axios implement with fetch api
 
 ### usage
 

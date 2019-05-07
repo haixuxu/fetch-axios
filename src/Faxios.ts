@@ -142,16 +142,17 @@ export default class Faxios {
     if (response.ok) {
       let contentType = response.headers.get('Content-Type') || 'application/json';
       contentType = contentType.toLowerCase();
-      if (contentType === 'application/json') {
+      if (/^application\/json/.test(contentType)) {
         resp.data = await response.json();
-      } else if (contentType === 'text/plain') {
+      } else if (/^text\/plain/.test(contentType)) {
         resp.data = await response.text();
-      } else if (contentType === 'application/octet-stream') {
+      } else if (/^application\/octet-stream/.test(contentType)) {
         resp.data = await response.blob();
       } else {
         try {
           resp.data = await response.json();
         } catch (e) {
+          console.warn('unknow content-type to parse response!');
           // ignore...
         }
       }
