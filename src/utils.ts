@@ -21,8 +21,11 @@ function transformHeader(headers: Headers) {
     return prev;
   }, {});
 }
-function promiseResolveReduce(initialArgument: any, functions: any[]) {
-  return functions.reduce((promise, func) => promise.then(func), Promise.resolve(initialArgument));
+function resolveTasks(context: any, functions: any[]) {
+  const getCtx = () => context;
+  return functions.reduce((promise, func) => {
+    return promise.then(func).then(getCtx);
+  }, Promise.resolve(context));
 }
 
 function promiseTimeout(ms: number, promise: Promise<any>) {
@@ -36,4 +39,4 @@ function promiseTimeout(ms: number, promise: Promise<any>) {
   // Returns a race between our timeout and the passed in promise
   return Promise.race([promise, timeout]);
 }
-export {serialize, getFormData, transformHeader, promiseTimeout, promiseResolveReduce};
+export {serialize, getFormData, transformHeader, promiseTimeout, resolveTasks};

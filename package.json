@@ -1,6 +1,6 @@
 {
   "name": "fetch-axios",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "license": "MIT",
   "main": "dist/faxios.cjs.js",
   "module": "dist/faxios.esm.js",

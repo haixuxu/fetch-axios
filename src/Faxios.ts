@@ -1,12 +1,14 @@
 import {FaxiosRequest, FaxiosResponse, FaxiosOptions} from './types/faxios';
-import {serialize, getFormData, transformHeader, promiseTimeout, promiseResolveReduce} from './utils';
+import {serialize, getFormData, transformHeader, promiseTimeout, resolveTasks} from './utils';
 import defaultOption from './default';
 /**
  * design
  *  |-----custom transform FaxiosRequest ---->|or|-----global transform FaxiosRequest ---->|
  *  |--------request interceptor ------------>|
  *  |-------FaxiosRequest => Request -------->|
+ *  |-----------before request -------------->|
  *  |--------_ window.fetch(Request)----_---->|
+ *  |-----------after request --------------->|
  *  |------Response => FaxiosResponse ------->|
  *  |--------response interceptor ----------->|
  *  |-----custom transform FaxiosResponse---->|or|-----global transform FaxiosRequest ---->|
@@ -43,37 +45,45 @@ export default class Faxios {
    */
   public async request(req: FaxiosRequest): Promise<FaxiosResponse<any>> {
     const customOps: FaxiosOptions = req.config || {};
-    let res;
+    let res: any;
     const timeout = customOps.timeout || this.defaultOps.timeout || 30000;
     req.config = Object.assign({}, this.defaultOps, req.config);
+
+    const beforeRequest = this.defaultOps.beforeRequest;
+    const afterRequest = this.defaultOps.afterRequest;
+
+    // get transformRequest function
+    const transformRequest = customOps.transformRequest || this.defaultOps.transformRequest;
+    // get transformResponse function
+    const transformResponse = customOps.transformResponse || this.defaultOps.transformResponse;
     try {
-      if (customOps.transformRequest) {
-        // custom transform FaxiosRequest
-        req = await customOps.transformRequest(req);
-      } else if (this.defaultOps.transformRequest) {
-        // global transform FaxiosRequest
-        req = await this.defaultOps.transformRequest(req);
+      if (transformRequest) {
+        req = await transformRequest(req);
       }
       // resolve request interceptor
-      req = await this.resolveRequestInterceptor(req);
+      await this.resolveRequestInterceptor(req);
       // transform FaxiosRequest => Request
       const request = await this.transformRequest(req);
+
+      if (beforeRequest) {
+        beforeRequest(req, request);
+      }
+      // call fetch api
       const response = await promiseTimeout(timeout, window.fetch(request));
+      if (afterRequest) {
+        afterRequest(req, response);
+      }
       // transform Response => FaxiosResponse
       res = await this.transformResponse(response, req);
       // resolve response interceptor
-      res = await this.resolveResponseInterceptor(res);
-      if (customOps.transformResponse) {
-        // custom transform FaxiosResponse
-        res = await customOps.transformResponse(res);
-      } else if (this.defaultOps.transformResponse) {
-        // global transform FaxiosResponse
-        res = await this.defaultOps.transformResponse(res);
+      await this.resolveResponseInterceptor(res);
+
+      if (transformResponse) {
+        res = await transformResponse(res);
       }
 
       return res;
     } catch (err) {
-      console.log(err);
       throw err;
     }
   }
@@ -160,10 +170,10 @@ export default class Faxios {
     return resp;
   }
   private resolveRequestInterceptor(request: any) {
-    return promiseResolveReduce(request, this.interceptors.request);
+    return resolveTasks(request, this.interceptors.request);
   }
 
   private resolveResponseInterceptor(response: any) {
-    return promiseResolveReduce(response, this.interceptors.response);
+    return resolveTasks(response, this.interceptors.response);
   }
 }

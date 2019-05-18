@@ -54,7 +54,9 @@ export default fetchApi;
  *  |-----custom transform FaxiosRequest ---->|or|-----global transform FaxiosRequest ---->|
  *  |--------request interceptor ------------>|
  *  |-------FaxiosRequest => Request -------->|
+ *  |-----------before request -------------->|
  *  |--------_ window.fetch(Request)----_---->|
+ *  |-----------after request --------------->|
  *  |------Response => FaxiosResponse ------->|
  *  |--------response interceptor ----------->|
  *  |-----custom transform FaxiosResponse---->|or|-----global transform FaxiosRequest ---->|
@@ -74,8 +76,10 @@ export interface FaxiosOptions {
   timeout?: number;
   mode?: RequestMode;
   credentials?: RequestCredentials;
-  transformRequest?: (request: FaxiosRequest) => FaxiosRequest;
-  transformResponse?: (response: FaxiosResponse<any>) => FaxiosResponse<any>;
+  beforeRequest?: (req: FaxiosRequest, request: Request) => void;
+  afterRequest?: (req: FaxiosRequest, response: Response) => void;
+  transformRequest?: (req: FaxiosRequest) => FaxiosRequest;
+  transformResponse?: (res: FaxiosResponse<any>) => FaxiosResponse<any>;
 }
 
 export interface FaxiosRequest {
@@ -98,8 +102,8 @@ export interface FaxiosResponse<T> {
   originalResponse: Response;
 }
 
-export type RequestInterceptor = (req: FaxiosRequest) => FaxiosRequest;
-export type ResponseInterceptor = (res: FaxiosResponse<any>) => FaxiosResponse<any>;
+export type RequestInterceptor = (req: FaxiosRequest) => Promise<any>;
+export type ResponseInterceptor = (res: FaxiosResponse<any>) => Promise<any>;
 ```
 
 ### faxios api
